@@ -1,0 +1,175 @@
+{% extends 'base.html' %} {% block title %}Schedules{% endblock %} {% block
+page_title %}Schedules{% endblock %} {% block content %}
+<div class="space-y-6">
+  <!-- Create form -->
+  <div
+    class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6"
+  >
+    <h2 class="font-semibold mb-4">Create Schedule</h2>
+    <form
+      method="POST"
+      action="{{ url_for('schedule_new') }}"
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+    >
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+      <div>
+        <label class="form-label">Name</label>
+        <input
+          type="text"
+          name="name"
+          required
+          maxlength="100"
+          class="form-input"
+          placeholder="Nightly Full Backup"
+        />
+      </div>
+      <div>
+        <label class="form-label">Router</label>
+        <select name="router_id" required class="form-input">
+          {% for r in routers %}
+          <option value="{{ r.id }}">{{ r.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label class="form-label">Backup Type</label>
+        <select name="backup_type" class="form-input">
+          <option value="full">Full (.backup)</option>
+          <option value="config">Config Only (.rsc)</option>
+        </select>
+      </div>
+      <div>
+        <label class="form-label">Cron Expression</label>
+        <input
+          type="text"
+          name="cron_expr"
+          required
+          class="form-input font-mono"
+          placeholder="0 2 * * *"
+        />
+        <p class="text-xs text-gray-400 mt-1">
+          min hour day month weekday (UTC)
+        </p>
+      </div>
+      <div>
+        <label class="form-label">Keep Last N</label>
+        <input
+          type="number"
+          name="keep_count"
+          value="10"
+          min="1"
+          max="1000"
+          class="form-input"
+        />
+      </div>
+      <div class="flex items-end">
+        <label class="flex items-center space-x-2 pb-2">
+          <input
+            type="checkbox"
+            name="enabled"
+            checked
+            class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          />
+          <span class="text-sm">Enabled</span>
+        </label>
+      </div>
+      <div class="md:col-span-2 lg:col-span-3">
+        <button
+          type="submit"
+          class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition shadow-sm"
+        >
+          Create Schedule
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- List -->
+  <div
+    class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden"
+  >
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead
+          class="bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider"
+        >
+          <tr>
+            <th class="px-5 py-3 text-left">Name</th>
+            <th class="px-5 py-3 text-left">Router</th>
+            <th class="px-5 py-3 text-left">Type</th>
+            <th class="px-5 py-3 text-left">Cron</th>
+            <th class="px-5 py-3 text-left">Keep</th>
+            <th class="px-5 py-3 text-left">Last Run</th>
+            <th class="px-5 py-3 text-left">Next Run</th>
+            <th class="px-5 py-3 text-center">Enabled</th>
+            <th class="px-5 py-3 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+          {% for s in schedules %}
+          <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30">
+            <td class="px-5 py-3 font-medium">{{ s.name }}</td>
+            <td class="px-5 py-3">{{ s.router_name or '—' }}</td>
+            <td class="px-5 py-3">{{ s.backup_type }}</td>
+            <td class="px-5 py-3 font-mono text-xs">{{ s.cron_expr }}</td>
+            <td class="px-5 py-3">{{ s.keep_count }}</td>
+            <td class="px-5 py-3 text-xs text-gray-500">
+              {{ s.last_run|fmt_dt }}
+            </td>
+            <td class="px-5 py-3 text-xs text-gray-500">
+              {{ s.next_run|fmt_dt }}
+            </td>
+            <td class="px-5 py-3 text-center">
+              <button
+                type="button"
+                data-action="toggle-schedule"
+                data-schedule-id="{{ s.id }}"
+                class="toggle-switch {{ 'on' if s.enabled else '' }}"
+              ></button>
+            </td>
+            <td class="px-5 py-3 text-right">
+              <form
+                method="POST"
+                action="{{ url_for('schedule_delete', sid=s.id) }}"
+                data-confirm="Delete schedule {{ s.name }}?"
+                class="inline"
+              >
+                <input
+                  type="hidden"
+                  name="csrf_token"
+                  value="{{ csrf_token }}"
+                />
+                <button
+                  type="submit"
+                  class="icon-btn text-red-600 hover:text-red-700"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="9" class="px-5 py-12 text-center text-gray-400">
+              No schedules yet.
+            </td>
+          </tr>
+        </tbody>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

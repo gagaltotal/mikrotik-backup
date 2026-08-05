@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block title %}History{% endblock %}
+{% block page_title %}History{% endblock %}
+{% block content %}
+<div class="space-y-6">
+  <!-- Filters -->
+  <form method="GET" class="flex flex-wrap items-end gap-3">
+    <div>
+      <label class="form-label">Router</label>
+      <select name="router" class="form-input">
+        <option value="">All</option>
+        {% for r in routers %}<option value="{{ r.id }}" {{ 'selected' if rf == r.id|string else '' }}>{{ r.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div>
+      <label class="form-label">Status</label>
+      <select name="status" class="form-input">
+        <option value="">All</option>
+        <option value="success" {{ 'selected' if sf == 'success' else '' }}>Success</option>
+        <option value="failed" {{ 'selected' if sf == 'failed' else '' }}>Failed</option>
+      </select>
+    </div>
+    <button type="submit" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition">Filter</button>
+    <a href="{{ url_for('history') }}" class="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900">Clear</a>
+  </form>
+
+  <!-- Backups table -->
+  <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">
+          <tr>
+            <th class="px-5 py-3 text-left">Router</th>
+            <th class="px-5 py-3 text-left">Type</th>
+            <th class="px-5 py-3 text-left">Filename</th>
+            <th class="px-5 py-3 text-left">Size</th>
+            <th class="px-5 py-3 text-left">Status</th>
+            <th class="px-5 py-3 text-left">Triggered By</th>
+            <th class="px-5 py-3 text-left">Date</th>
+            <th class="px-5 py-3 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+          {% for b in backups %}
+          <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30">
+            <td class="px-5 py-3 font-medium">{{ b.router_name or '—' }}</td>
+            <td class="px-5 py-3">{{ b.backup_type }}</td>
+            <td class="px-5 py-3 max-w-xs truncate">{{ b.filename or '—' }}</td>
+            <td class="px-5 py-3 text-gray-500">{{ b.file_size|fmt_size }}</td>
+            <td class="px-5 py-3"><span class="status-badge {{ b.status|status_class }}">{{ b.status }}</span></td>
+            <td class="px-5 py-3 text-xs">{{ b.triggered_by }}</td>
+            <td class="px-5 py-3 text-xs text-gray-500">{{ b.created_at|fmt_dt }}</td>
+            <td class="px-5 py-3">
+              <div class="flex items-center justify-end space-x-1">
+                {% if b.status == 'success' %}
+                <a href="{{ url_for('backup_download', bid=b.id) }}" class="icon-btn text-blue-600 hover:text-blue-700" title="Download">
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                </a>
+                {% endif %}
+                <form method="POST" action="{{ url_for('backup_delete', bid=b.id) }}" onsubmit="return confirm('Delete this backup record?')" class="inline">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                  <button type="submit" class="icon-btn text-red-600 hover:text-red-700" title="Delete">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="8" class="px-5 py-12 text-center text-gray-400">No backups found.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% if total > per_page %}
+    <div class="px-5 py-3 border-t border-gray-200 dark:border-gray-700 text-sm text-gray-500">
+      Page {{ page }} of {{ ((total - 1) // per_page) + 1 }} — {{ total }} total
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Activity log -->
+  <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+    <div class="px-5 py-4 border-b border-gray-200 dark:border-gray-700"><h2 class="font-semibold">Activity Log</h2></div>
+    <div class="divide-y divide-gray-100 dark:divide-gray-700 max-h-96 overflow-y-auto">
+      {% for a in activity %}
+      <div class="px-5 py-3">
+        <div class="flex items-center space-x-2">
+          <span class="status-badge {{ a.status|status_class }}">{{ a.status }}</span>
+          <span class="text-sm font-medium">{{ a.router_name or 'System' }}</span>
+          <span class="text-xs text-gray-400">{{ a.action }}</span>
+        </div>
+        <p class="text-xs text-gray-500 mt-1">{{ a.message }}</p>
+        <p class="text-xs text-gray-400">{{ a.created_at|fmt_dt }}</p>
+      </div>
+      {% else %}
+      <div class="px-5 py-8 text-center text-gray-400 text-sm">No activity yet.</div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

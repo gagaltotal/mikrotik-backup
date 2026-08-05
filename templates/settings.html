@@ -1,0 +1,83 @@
+{% extends 'base.html' %} {% block title %}Settings{% endblock %} {% block
+page_title %}Settings{% endblock %} {% block content %}
+<div class="max-w-2xl mx-auto space-y-6">
+  <div
+    class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6"
+  >
+    <h2 class="font-semibold mb-4">Change Password</h2>
+    <form method="POST" class="space-y-4">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+      <input type="hidden" name="action" value="change_password" />
+      <div>
+        <label class="form-label">Current Password</label>
+        <input
+          type="password"
+          name="current_password"
+          required
+          class="form-input"
+        />
+      </div>
+      <div>
+        <label class="form-label">New Password</label>
+        <input
+          type="password"
+          name="new_password"
+          required
+          minlength="8"
+          class="form-input"
+        />
+      </div>
+      <div>
+        <label class="form-label">Confirm New Password</label>
+        <input
+          type="password"
+          name="confirm_password"
+          required
+          class="form-input"
+        />
+      </div>
+      <button
+        type="submit"
+        class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition"
+      >
+        Update Password
+      </button>
+    </form>
+  </div>
+
+  <div
+    class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6"
+  >
+    <h2 class="font-semibold mb-2">Test All Connections</h2>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+      Test connectivity to all enabled routers simultaneously.
+    </p>
+    <form method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+      <input type="hidden" name="action" value="test_all" />
+      <button
+        type="submit"
+        class="px-5 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+      >
+        Test All Routers
+      </button>
+    </form>
+  </div>
+
+  <div
+    class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6"
+  >
+    <h2 class="font-semibold mb-2">Security Information</h2>
+    <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1.5">
+      <li>✓ All credentials encrypted at rest (AES-128 via Fernet)</li>
+      <li>✓ CSRF protection on every form submission</li>
+      <li>✓ Parameterized SQL queries (no SQL injection)</li>
+      <li>✓ Path-traversal prevention on file operations</li>
+      <li>✓ No shell execution — SSH commands run on router only</li>
+      <li>✓ Rate-limited login attempts</li>
+      <li>✓ Security headers (CSP, X-Frame-Options, etc.)</li>
+      <li>✓ Session cookies HttpOnly + SameSite</li>
+    </ul>
+  </div>
+</div>
+{% endblock %}

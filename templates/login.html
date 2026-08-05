@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login · Mikrotik Backup</title>
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='image/router.png') }}">
+  </head>
+  <body
+    class="h-full bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4 font-inter"
+  >
+    <div class="w-full max-w-md">
+      <div class="text-center mb-8">
+        <div
+          class="inline-flex items-center justify-center w-16 h-16 bg-white/10 backdrop-blur rounded-2xl mb-4"
+        >
+          <svg
+            class="w-9 h-9 text-white"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M5 12H3l9-9 9 9h-2M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7M9 21V9h6v12"
+            />
+          </svg>
+        </div>
+        <h1 class="text-3xl font-bold text-white tracking-tight">
+          MikroBackup
+        </h1>
+        <p class="text-blue-200 mt-2">MikroTik Router Backup Manager</p>
+      </div>
+      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8">
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %} {% for cat, msg in messages %}
+        <div class="alert alert-{{ cat }} mb-4">{{ msg }}</div>
+        {% endfor %} {% endif %} {% endwith %}
+        <form method="POST" action="{{ url_for('login') }}" class="space-y-5">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+          <div>
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+              >Username</label
+            >
+            <input
+              type="text"
+              name="username"
+              required
+              autofocus
+              maxlength="100"
+              class="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+              placeholder="username"
+            />
+          </div>
+          <div>
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+              >Password</label
+            >
+            <input
+              type="password"
+              name="password"
+              required
+              class="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+              placeholder="••••••••"
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition shadow-lg shadow-blue-600/30"
+          >
+            Sign in
+          </button>
+        </form>
+      </div>
+      <p class="text-center text-blue-200 text-xs mt-6">
+        Mikrotik Backup &amp; Dashboard
+      </p>
+    </div>
+  </body>
+</html>

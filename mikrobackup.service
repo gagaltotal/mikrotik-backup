@@ -1,0 +1,16 @@
+[Unit]
+Description=MikroBackup Flask Application (Gunicorn)
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/mikrotik-backup
+EnvironmentFile=/etc/mikrotik-backup.env
+Environment=FLASK_ENV=production
+ExecStart=/opt/mikrotik-backup/.venv/bin/gunicorn --workers 4 --bind 0.0.0.0:5000 --timeout 120 --access-logfile - --error-logfile - app:app
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
