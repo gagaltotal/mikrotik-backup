@@ -184,23 +184,28 @@ def _status_cls(s):
 def login():
     if 'user_id' in session:
         return redirect(url_for('dashboard'))
+        
     if request.method == 'POST':
         if not validate_csrf_token(request.form.get('csrf_token')):
             flash('Session expired. Please retry.', 'error')
             return render_template('login.html')
+            
         ip = request.remote_addr or 'unknown'
         key = f'_lr:{ip}'
         if not hasattr(app, '_attempts'):
             app._attempts = {}
+            
         now = time.time()
         arr = [t for t in app._attempts.get(key, [])
                if now - t < config.LOGIN_WINDOW_SECONDS]
+               
         if len(arr) >= config.LOGIN_MAX_ATTEMPTS:
             flash('Too many attempts. Wait 5 minutes.', 'error')
             return render_template('login.html')
         
         username = (request.form.get('username') or '').strip()[:100]
         password = request.form.get('password') or ''
+        
         user = User.query.filter_by(username=username).first()
         
         if user and check_password_hash(user.password_hash, password):
@@ -208,16 +213,23 @@ def login():
             session['user_id'] = user.id
             session['username'] = user.username
             session.permanent = True
+            
             user.last_login = datetime.utcnow()
             db.session.commit()
+            
             app._attempts.pop(key, None)
+            
             nxt = request.args.get('next') or url_for('dashboard')
-        if not nxt.startswith('/') or nxt.startswith('//'):
+            
+            if not nxt.startswith('/') or nxt.startswith('//'):
+                nxt = url_for('dashboard')
+                
             return redirect(nxt)
         
         arr.append(now)
         app._attempts[key] = arr
         flash('Invalid username or password.', 'error')
+        
     return render_template('login.html')
 
 @app.route('/logout')
