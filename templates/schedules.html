@@ -62,16 +62,19 @@ page_title %}Schedules{% endblock %} {% block content %}
           class="form-input"
         />
       </div>
-      <div class="flex items-end">
-        <label class="flex items-center space-x-2 pb-2">
-          <input
-            type="checkbox"
-            name="enabled"
-            checked
-            class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-          />
-          <span class="text-sm">Enabled</span>
-        </label>
+      <div>
+        <label class="form-label hidden md:block">&nbsp;</label>
+        <div class="flex items-center h-[42px]">
+          <label class="flex items-center space-x-2 cursor-pointer">
+            <input
+              type="checkbox"
+              name="enabled"
+              checked
+              class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <span class="text-sm">Enabled</span>
+          </label>
+        </div>
       </div>
       <div class="md:col-span-2 lg:col-span-3">
         <button

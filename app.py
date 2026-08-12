@@ -281,29 +281,48 @@ def router_new():
 @login_required
 @csrf_protect
 def router_edit(rid):
-    row = Router.query.get_or_404(rid)
+    row = Router.query.get(rid)
+    if not row:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json:
+            return jsonify({'success': False, 'message': 'Data router tidak ditemukan.'}), 404
+        flash('Data router tidak ditemukan.', 'error')
+        return redirect(url_for('routers'))
+        
     if request.method == 'POST':
         errors = _validate_router_form(request.form, is_edit=True)
         if errors:
             for e in errors: flash(e, 'error')
             return render_template('router_form.html', router=request.form, is_edit=True, rid=rid)
+            
         _update_router(row, request.form)
-        flash(f'Router "{request.form["name"]}" updated.', 'success')
+        flash(f'Router "{request.form["name"]}" berhasil diperbarui.', 'success')
         return redirect(url_for('routers'))
+        
     return render_template('router_form.html', router=row, is_edit=True, rid=rid)
 
 @app.route('/routers/<int:rid>/delete', methods=['POST'])
 @login_required
 @csrf_protect
 def router_delete(rid):
-    row = Router.query.get_or_404(rid)
+    row_data = Router.query.get(rid)
+    if not row_data:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json:
+            return jsonify({'success': False, 'message': 'Data router tidak ditemukan atau sudah dihapus.'}), 404
+        flash('Data router tidak ditemukan atau sudah dihapus.', 'error')
+        return redirect(url_for('routers'))
+        
     for s in Schedule.query.filter_by(router_id=rid).all():
         sched.remove_schedule_job(s.id)
-    name = row.name
-    db.session.delete(row)
+        
+    name = row_data.name
+    db.session.delete(row_data)
     db.session.commit()
     log_activity(rid, 'router_deleted', 'success', f'"{name}" removed')
-    flash(f'Router "{name}" deleted.', 'success')
+    
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json:
+        return jsonify({'success': True, 'message': f'Router "{name}" berhasil dihapus.'})
+        
+    flash(f'Router "{name}" berhasil dihapus.', 'success')
     return redirect(url_for('routers'))
 
 @app.route('/api/routers/test', methods=['POST'])
