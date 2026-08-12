@@ -8,14 +8,28 @@ Fitur utama:
 - Melindungi aplikasi dengan login admin
 - Menggunakan Flask, SQLAlchemy, Flask-Migrate, dan Gunicorn
 
-Persyaratan
------------
+## Persyaratan
+
 - Docker dan Docker Compose untuk menjalankan dalam container
 - Python 3.12 untuk pengembangan lokal
 - MySQL 8.0 ketika dijalankan di luar Docker
 
-Instalasi dan pengembangan lokal
--------------------------------
+## Screenshot Apps
+
+![Screen Capture](https://raw.githubusercontent.com/gagaltotal/mikrotik-backup/refs/heads/main/images/Screenshot%20from%202026-08-12%2014-28-18.png)
+
+![Screen Capture](https://raw.githubusercontent.com/gagaltotal/mikrotik-backup/refs/heads/main/images/Screenshot%20from%202026-08-12%2014-39-50.png)
+
+![Screen Capture](https://raw.githubusercontent.com/gagaltotal/mikrotik-backup/refs/heads/main/images/Screenshot%20from%202026-08-12%2014-40-05.png)
+
+![Screen Capture](https://raw.githubusercontent.com/gagaltotal/mikrotik-backup/refs/heads/main/images/Screenshot%20from%202026-08-12%2015-06-31.png)
+
+![Screen Capture](https://raw.githubusercontent.com/gagaltotal/mikrotik-backup/refs/heads/main/images/Screenshot%20from%202026-08-12%2015-06-42.png)
+
+![Screen Capture](https://raw.githubusercontent.com/gagaltotal/mikrotik-backup/refs/heads/main/images/Screenshot%20from%202026-08-12%2015-06-51.png)
+
+## Instalasi dan pengembangan lokal
+
 1. Salin contoh konfigurasi environment:
    
    ```
@@ -53,8 +67,8 @@ Instalasi dan pengembangan lokal
    http://localhost:5000
    ```
 
-Docker Compose (development / production ringan)
-----------------------------------------------
+## Docker Compose (development / production ringan)
+
 1. Salin contoh environment dan sesuaikan nilai:
 
    ```
@@ -75,8 +89,8 @@ Docker Compose (development / production ringan)
 
 Pengaturan ini otomatis memetakan direktori `backups/` dan `logs/` dari host ke container.
 
-Environment variables
----------------------
+## Environment variables
+
 - `DATABASE_URL`: URL koneksi SQLAlchemy untuk MySQL
 - `SECRET_KEY`: kunci rahasia Flask untuk sesi dan CSRF
 - `SESSION_COOKIE_SECURE`: `true` jika HTTPS digunakan, `false` untuk HTTP lokal
@@ -84,34 +98,35 @@ Environment variables
 - `ADMIN_USERNAME` / `ADMIN_PASSWORD`: jika diisi, admin baru akan dibuat saat startup
 - `MYSQL_DATABASE`, `MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_ROOT_PASSWORD`: konfigurasi MySQL untuk Docker
 
-Service systemd (production)
-----------------------------
+## Service systemd (production)
+
 1. Copy file service ke `/etc/systemd/system/mikrobackup.service`.
 2. Siapkan file environment pada `/etc/mikrotik-backup.env` dengan nilai:
-
+   ```
    DATABASE_URL=... 
    SECRET_KEY=...
    SESSION_COOKIE_SECURE=true
    FLASK_ENV=production
    ADMIN_USERNAME=admin
    ADMIN_PASSWORD=Secret123
-
+   ```
 3. Pastikan aplikasi di-deploy ke `/opt/mikrotik-backup` dan virtual environment berada di `/opt/mikrotik-backup/.venv`.
 4. Reload systemd dan aktifkan service:
-
+   ```
    sudo systemctl daemon-reload
    sudo systemctl enable mikrobackup.service
    sudo systemctl start mikrobackup.service
+   ```
 
-Catatan produksi
-----------------
+## Catatan produksi
+
 - Jangan simpan file `.env` berisi password ke repositori.
 - Pastikan `SECRET_KEY` adalah nilai acak panjang.
 - Gunakan HTTPS di depan Gunicorn jika menjalankan di internet publik.
 - Volume `backups/` dan `logs/` harus bisa ditulis oleh container atau user service.
 
-Struktur repositori penting
---------------------------
+## Struktur repositori penting
+
 - `app.py`: aplikasi Flask utama
 - `config.py`: konfigurasi Flask dan SQLAlchemy
 - `db.py`: model database
