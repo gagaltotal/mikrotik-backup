@@ -33,3 +33,6 @@ Thumbs.db
 
 migrations
 mikrotik_backup.db
+Dockerfile-backup
+docker-compose.yml-backup
+entrypoint.sh-backup

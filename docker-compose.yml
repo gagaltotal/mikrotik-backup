@@ -1,34 +1,50 @@
-version: '3.8'
-
 services:
   db:
     image: mysql:8.0
     container_name: mikrobackup-db
-    restart: always
+    restart: unless-stopped
+
     env_file:
       - .env
+
     environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-mikrobackup}
-      MYSQL_USER: ${MYSQL_USER:-mikrobackup_user}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-passwordkuat}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_password_sangat_kuat}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+
     volumes:
-      - db_data:/var/lib/mysql
-    ports:
-      - "3306:3306"
+      - mikrobackup_db_data:/var/lib/mysql
+
+    # no expose MySQL ke host
+    # ports:
+    #   - "3306:3306"
+
+    networks:
+      - mikrobackup-net
+
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost"]
-      timeout: 10s
-      retries: 5
+      test:
+        [
+          "CMD-SHELL",
+          "mysqladmin ping -h 127.0.0.1 -u root -p\"$${MYSQL_ROOT_PASSWORD}\" --silent"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   web:
     build: .
     container_name: mikrobackup-app
-    restart: always
+    restart: unless-stopped
+
     env_file:
       - .env
+
     ports:
-      - "5000:5000"
+      - "8500:5000"
+
     environment:
       DATABASE_URL: ${DATABASE_URL}
       SECRET_KEY: ${SECRET_KEY}
@@ -36,11 +52,27 @@ services:
       FLASK_ENV: ${FLASK_ENV:-production}
       ADMIN_USERNAME: ${ADMIN_USERNAME:-}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+
     volumes:
       - ./backups:/app/backups
       - ./logs:/app/logs
+      - mikrobackup_migrations:/app/migrations
+
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+
+    networks:
+      - mikrobackup-net
 
 volumes:
-  db_data:
+  mikrobackup_db_data:
+    name: mikrobackup_db_data
+  
+  mikrobackup_migrations:
+    name: mikrobackup_migrations
+
+networks:
+  mikrobackup-net:
+    name: mikrobackup-net
+    driver: bridge
