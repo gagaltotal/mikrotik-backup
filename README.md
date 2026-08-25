@@ -85,6 +85,10 @@ Fitur utama:
 
    ```
    http://localhost:5000
+
+   Atau
+
+   http://localhost:8500
    ```
 
 Pengaturan ini otomatis memetakan direktori `backups/` dan `logs/` dari host ke container.
