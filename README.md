@@ -93,6 +93,14 @@ Fitur utama:
 
 Pengaturan ini otomatis memetakan direktori `backups/` dan `logs/` dari host ke container.
 
+ganti permission jika direktori backups dan logs menjadi user root :
+
+```
+sudo mkdir -p logs backups
+sudo chown -R 1000:1000 logs backups
+sudo chmod -R u+rwX logs backups
+```
+
 ## Environment variables
 
 - `DATABASE_URL`: URL koneksi SQLAlchemy untuk MySQL
