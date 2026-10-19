@@ -1,8 +1,13 @@
 // ── Theme toggle ─────────────────────────────────────────────
 function toggleTheme() {
-  const html = document.documentElement;
-  const isDark = html.classList.toggle("dark");
-  localStorage.setItem("theme", isDark ? "dark" : "light");
+  const root = document.documentElement;
+  const next = root.classList.contains("dark") ? "light" : "dark";
+  if (typeof window.setTheme === "function") {
+    window.setTheme(next);
+  } else {
+    root.classList.toggle("dark", next === "dark");
+    localStorage.setItem("theme", next);
+  }
 }
 
 // ── Sidebar ──────────────────────────────────────────────────
