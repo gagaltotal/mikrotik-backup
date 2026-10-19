@@ -78,7 +78,7 @@ Fitur utama:
 2. Jalankan Compose:
 
    ```
-   docker-compose up --build
+   docker compose up -d --build
    ```
 
 3. Akses aplikasi:
