@@ -72,7 +72,7 @@ page_title %}Routers{% endblock %} {% block content %}
   });
 </script>
 <div class="space-y-4">
-  <div class="flex items-center justify-between">
+  <div class="flex flex-wrap items-center justify-between gap-3">
     <p class="text-sm text-gray-500 dark:text-gray-400">
       {{ routers|length }} router(s) registered
     </p>
@@ -100,7 +100,7 @@ page_title %}Routers{% endblock %} {% block content %}
     class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden"
   >
     <div class="overflow-x-auto">
-      <table class="w-full text-sm">
+      <table class="table-card text-sm">
         <thead
           class="bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider"
         >

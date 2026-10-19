@@ -4,15 +4,15 @@
 {% block content %}
 <div class="space-y-6">
   <!-- Filters -->
-  <form method="GET" class="flex flex-wrap items-end gap-3">
-    <div>
+  <form method="GET" class="flex flex-col sm:flex-row sm:flex-wrap sm:items-end gap-3">
+    <div class="w-full sm:w-56">
       <label class="form-label">Router</label>
       <select name="router" class="form-input">
         <option value="">All</option>
         {% for r in routers %}<option value="{{ r.id }}" {{ 'selected' if rf == r.id|string else '' }}>{{ r.name }}</option>{% endfor %}
       </select>
     </div>
-    <div>
+    <div class="w-full sm:w-56">
       <label class="form-label">Status</label>
       <select name="status" class="form-input">
         <option value="">All</option>
@@ -20,14 +20,16 @@
         <option value="failed" {{ 'selected' if sf == 'failed' else '' }}>Failed</option>
       </select>
     </div>
-    <button type="submit" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition">Filter</button>
-    <a href="{{ url_for('history') }}" class="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900">Clear</a>
+    <div class="flex items-center gap-3 w-full sm:w-auto">
+      <button type="submit" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition">Filter</button>
+      <a href="{{ url_for('history') }}" class="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">Clear</a>
+    </div>
   </form>
 
   <!-- Backups table -->
   <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
     <div class="overflow-x-auto">
-      <table class="w-full text-sm">
+      <table class="table-card text-sm">
         <thead class="bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">
           <tr>
             <th class="px-5 py-3 text-left">Router</th>
@@ -85,9 +87,9 @@
     <div class="divide-y divide-gray-100 dark:divide-gray-700 max-h-96 overflow-y-auto">
       {% for a in activity %}
       <div class="px-5 py-3">
-        <div class="flex items-center space-x-2">
+        <div class="flex flex-wrap items-center gap-2">
           <span class="status-badge {{ a.status|status_class }}">{{ a.status }}</span>
-          <span class="text-sm font-medium">{{ a.router_name or 'System' }}</span>
+          <span class="text-sm font-medium min-w-0 truncate">{{ a.router_name or 'System' }}</span>
           <span class="text-xs text-gray-400">{{ a.action }}</span>
         </div>
         <p class="text-xs text-gray-500 mt-1">{{ a.message }}</p>

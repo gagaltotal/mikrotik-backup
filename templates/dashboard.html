@@ -136,15 +136,15 @@ page_title %}Dashboard{% endblock %} {% block content %}
         class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-5 router-card"
         data-router-id="{{ r.id }}"
       >
-        <div class="flex items-start justify-between mb-3">
-          <div>
-            <h3 class="font-semibold text-base">{{ r.name }}</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">
+        <div class="flex items-start justify-between gap-3 mb-3">
+          <div class="min-w-0">
+            <h3 class="font-semibold text-base truncate">{{ r.name }}</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
               {{ r.host }}:{{ r.port }}
             </p>
           </div>
           <span
-            class="status-badge {{ r.last_status|status_class }}"
+            class="status-badge shrink-0 {{ r.last_status|status_class }}"
             data-status="{{ r.last_status }}"
           >
             {{ r.last_status or 'unknown' }}
@@ -203,7 +203,7 @@ page_title %}Dashboard{% endblock %} {% block content %}
       </div>
       <div class="divide-y divide-gray-100 dark:divide-gray-700">
         {% for b in recent %}
-        <div class="px-5 py-3 flex items-center justify-between">
+        <div class="px-5 py-3 flex items-center justify-between gap-3">
           <div class="min-w-0">
             <p class="text-sm font-medium truncate">
               {{ b.router_name }} — {{ b.filename }}
@@ -212,7 +212,7 @@ page_title %}Dashboard{% endblock %} {% block content %}
               {{ b.created_at|fmt_dt }} · {{ b.triggered_by }}
             </p>
           </div>
-          <div class="flex items-center space-x-3 ml-3">
+          <div class="flex items-center space-x-3 shrink-0">
             <span class="status-badge {{ b.status|status_class }}"
               >{{ b.status }}</span
             >
@@ -244,11 +244,11 @@ page_title %}Dashboard{% endblock %} {% block content %}
       >
         {% for a in activity %}
         <div class="px-5 py-3">
-          <div class="flex items-center space-x-2">
+          <div class="flex flex-wrap items-center gap-2">
             <span class="status-badge {{ a.status|status_class }}"
               >{{ a.status }}</span
             >
-            <span class="text-sm font-medium"
+            <span class="text-sm font-medium min-w-0 truncate"
               >{{ a.router_name or 'System' }}</span
             >
           </div>

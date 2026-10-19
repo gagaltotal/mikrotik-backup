@@ -66,6 +66,13 @@ body {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
+/* Tables: full width on desktop, scroll inside the card on small screens */
+.table-card {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+}
+
 /* Status badges */
 .status-badge {
   display: inline-flex;

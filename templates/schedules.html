@@ -62,19 +62,16 @@ page_title %}Schedules{% endblock %} {% block content %}
           class="form-input"
         />
       </div>
-      <div>
-        <label class="form-label hidden md:block">&nbsp;</label>
-        <div class="flex items-center h-[42px]">
-          <label class="flex items-center space-x-2 cursor-pointer">
-            <input
-              type="checkbox"
-              name="enabled"
-              checked
-              class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-            />
-            <span class="text-sm">Enabled</span>
-          </label>
-        </div>
+      <div class="flex items-end">
+        <label class="flex items-center gap-2 cursor-pointer py-2 md:py-0">
+          <input
+            type="checkbox"
+            name="enabled"
+            checked
+            class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          />
+          <span class="text-sm">Enabled</span>
+        </label>
       </div>
       <div class="md:col-span-2 lg:col-span-3">
         <button
@@ -92,7 +89,7 @@ page_title %}Schedules{% endblock %} {% block content %}
     class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden"
   >
     <div class="overflow-x-auto">
-      <table class="w-full text-sm">
+      <table class="table-card text-sm">
         <thead
           class="bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider"
         >
